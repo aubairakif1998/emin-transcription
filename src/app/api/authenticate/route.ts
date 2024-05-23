@@ -1,10 +1,7 @@
 import { DeepgramError, createClient } from "@deepgram/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 const fs = require("fs");
-import PDFDocument from "pdfkit"
 import path from "path";
-import { Readable } from "stream";
-import { NextApiRequest, NextApiResponse } from "next";
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
@@ -79,12 +76,7 @@ const transcribeFile = async (filePath: string): Promise<TranscriptionResult> =>
   return result;
 };
 
-const generatePDF = (text: string): PDFKit.PDFDocument => {
-  const doc = new PDFDocument();
-  doc.text(text);
-  doc.end();
-  return doc;
-};
+ 
 
 
 export async function POST(req: NextRequest, res: NextResponse) {
