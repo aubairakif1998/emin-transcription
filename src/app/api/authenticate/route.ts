@@ -1,7 +1,10 @@
 import { DeepgramError, createClient } from "@deepgram/sdk";
 import { NextResponse, type NextRequest } from "next/server";
 const fs = require("fs");
-
+import PDFDocument from "pdfkit"
+import path from "path";
+import { Readable } from "stream";
+import { NextApiRequest, NextApiResponse } from "next";
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
@@ -56,13 +59,43 @@ export async function GET(request: NextRequest) {
   return response;
 }
 
-export async function POST(request: NextRequest, response: NextResponse) { 
-  const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
 
-    // STEP 2: Call the transcribeFile method with the audio payload and options
-    const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
-      // path to the audio file
-      fs.readFileSync("spacewalk.mp3"),
+interface TranscriptionResult {
+  [key: string]: any;
+}
+
+const transcribeFile = async (filePath: string): Promise<TranscriptionResult> => {
+  const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
+  const audioBuffer = fs.readFileSync(filePath);
+  const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+    audioBuffer,
+    {
+      model: "nova-2",
+      smart_format: true,
+    }
+  );
+
+  if (error) throw error;
+  return result;
+};
+
+const generatePDF = (text: string): PDFKit.PDFDocument => {
+  const doc = new PDFDocument();
+  doc.text(text);
+  doc.end();
+  return doc;
+};
+
+
+export async function POST(req: NextRequest, res: NextResponse) {
+  try {
+    const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
+
+    // STEP 2: Call the transcribeUrl method with the audio payload and options
+    const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
+      {
+        url: "https://dpgr.am/spacewalk.wav",
+      },
       // STEP 3: Configure Deepgram options for audio analysis
       {
         model: "nova-2",
@@ -70,7 +103,18 @@ export async function POST(request: NextRequest, response: NextResponse) {
       }
     );
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
+
     // STEP 4: Print the results
-    if (!error) console.dir(result, { depth: null });
+    if (result) {
+      console.dir(result, { depth: null });
+      return NextResponse.json({ message: "Transcription completed successfully" });
+    }
+    // NextResponse.json({ 'msg':"success" })
+  } catch (error) {
+    // Handle errors
+    return NextResponse.json({ error: (error as Error).message });
+  }
 }
