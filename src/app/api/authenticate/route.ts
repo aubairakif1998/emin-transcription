@@ -56,29 +56,7 @@ export async function GET(request: NextRequest) {
   return response;
 }
 
-
-interface TranscriptionResult {
-  [key: string]: any;
-}
-
-const transcribeFile = async (filePath: string): Promise<TranscriptionResult> => {
-  const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
-  const audioBuffer = fs.readFileSync(filePath);
-  const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
-    audioBuffer,
-    {
-      model: "nova-2",
-      smart_format: true,
-    }
-  );
-
-  if (error) throw error;
-  return result;
-};
-
  
-
-
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const formData = await req.formData();
