@@ -1,5 +1,6 @@
 import { DeepgramError, createClient } from "@deepgram/sdk";
 import { NextResponse, type NextRequest } from "next/server";
+const fs = require("fs");
 
 export const revalidate = 0;
 
@@ -55,3 +56,21 @@ export async function GET(request: NextRequest) {
   return response;
 }
 
+export async function POST(request: NextRequest, response: NextResponse) { 
+  const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
+
+    // STEP 2: Call the transcribeFile method with the audio payload and options
+    const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+      // path to the audio file
+      fs.readFileSync("spacewalk.mp3"),
+      // STEP 3: Configure Deepgram options for audio analysis
+      {
+        model: "nova-2",
+        smart_format: true,
+      }
+    );
+
+    if (error) throw error;
+    // STEP 4: Print the results
+    if (!error) console.dir(result, { depth: null });
+}
