@@ -32,7 +32,6 @@
 }
 
 .navbar button, .navbar a {
-  background-color: #d7d7d7;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -42,5 +41,4 @@
 }
 
 .navbar button:hover, .navbar a:hover {
-  background-color: #d7d7d7;
 }

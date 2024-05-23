@@ -129,7 +129,7 @@ const RecordPage: React.FC = () => {
 
   const startRecording = () => {
     setShowRecordingIndicator(true);
-    setRecordedChunks([]); // Reset recorded chunks
+    setRecordedChunks([]);
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then((stream) => {
         audioStream.current = stream;
@@ -189,8 +189,9 @@ const RecordPage: React.FC = () => {
           throw new Error('Failed to transcribe file');
         }
 
-        const result = await response.json();
+        const result = await response.json(); 
         console.log('File transcription successful:', result);
+        // alert(alternatives[0]?.transcript)
       } catch (error: any) {
         console.error('Error transcribing file:', error.message);
       } finally {

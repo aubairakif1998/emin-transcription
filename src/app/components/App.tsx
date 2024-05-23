@@ -34,6 +34,7 @@ const App: () => JSX.Element = () => {
       connectToDeepgram({
         model: "nova-2",
         interim_results: true,
+        language:'de',
         smart_format: true,
         filler_words: true,
         utterance_end_ms: 3000,

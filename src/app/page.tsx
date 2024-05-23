@@ -1,7 +1,6 @@
 "use client"; 
 import App from "./components/App"; 
 import RecordPage from "./components/RecordPage"; 
-
 const Home = () => { 
   return (
     <>

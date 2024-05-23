@@ -79,6 +79,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       // STEP 4: Configure Deepgram options for audio analysis
       {
         model: 'nova-2',
+        language:'de',
         smart_format: true,
       }
     );
