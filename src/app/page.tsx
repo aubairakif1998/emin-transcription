@@ -1,15 +1,6 @@
-"use client";
-
-import { useState } from "react";
-import Image from "next/image";
-import App from "./components/App";
-import { XIcon } from "./components/icons/XIcon";
-import { LinkedInIcon } from "./components/icons/LinkedInIcon";
-import { FacebookIcon } from "./components/icons/FacebookIcon";
-import GitHubButton from "react-github-btn";
-import VoiceRecorder from "./components/RecordPage";
-import RecordPage from "./components/RecordPage";
-import MicrophoneComponent from "./components/MicrophoneComponent";
+"use client"; 
+import App from "./components/App"; 
+import RecordPage from "./components/RecordPage"; 
 
 const Home = () => { 
   return (
