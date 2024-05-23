@@ -118,11 +118,17 @@ export async function POST(req: NextRequest, res: NextResponse) {
     // Print the results
     if (result) {
       console.dir(result, { depth: null });
+      const files = fs.readdirSync(publicDir);
+      files.forEach((file: string) => {
+        console.log('running')
+        if (/^recorded_audio_/.test(file)) {
+          fs.unlinkSync(path.join(publicDir, file));
+        }
+      });
       return NextResponse.json({ message: 'Transcription completed successfully', result });
-    }
-
+    } 
   } catch (error) {
-    // Handle errors
+    
     return NextResponse.json({ error: (error as Error).message });
-  }
-}
+  } 
+} 

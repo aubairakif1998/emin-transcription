@@ -9,21 +9,19 @@ import { FacebookIcon } from "./components/icons/FacebookIcon";
 import GitHubButton from "react-github-btn";
 import VoiceRecorder from "./components/RecordPage";
 import RecordPage from "./components/RecordPage";
+import MicrophoneComponent from "./components/MicrophoneComponent";
 
-const Home = () => {
-  const [showApp, setShowApp] = useState(false);
-  const [fileName, setFileName] = useState('');
-  // const getApiKey = async (): Promise<string> => {
-  //   const response = await fetch("/api/authenticate", { cache: "no-store" });
-  //   const result = await response.json();
-  //   return result.key;
-  // }; 
+const Home = () => { 
   return (
     <>
       <div className="h-full overflow-hidden">
-         
+
         <main className="mx-auto px-4 md:px-6 lg:px-8 h-[calc(100%-4rem)] -mb-[4rem]">
-          {showApp ? <>  <RecordPage/><App /> </> : (
+          {/* {showApp ? <>  <RecordPage/>
+          
+          
+          <App /> 
+          </> : (
             <div className="transition-opacity duration-500 ease-in-out opacity-100">
               <h1 className="text-center text-2xl font-bold mt-10">
                 Welcome to Emin Transcription
@@ -32,10 +30,13 @@ const Home = () => {
                 Click the button below to start the application.
               </p>
             </div>
-          )}
+          )} */}
+          <>  <RecordPage /> 
+            <App />
+          </>
         </main>
         <div className="fixed bottom-4 right-4 flex space-x-2">
-          {showApp ? <button
+          {/* {showApp ? <button
             className="px-4 py-2 bg-red-500 text-white rounded"
             onClick={() => setShowApp(false)}
           >
@@ -45,7 +46,7 @@ const Home = () => {
             onClick={() => setShowApp(true)}
           >
             Start App
-          </button>}
+          </button>} */}
 
         </div>
       </div>
