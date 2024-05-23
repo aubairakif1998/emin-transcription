@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import './style.css'
-import { createClient }   from "@deepgram/sdk" ; 
+import './style.css';
 
 const RecordPage: React.FC = () => {
   const [recording, setRecording] = useState<boolean>(false);
@@ -12,7 +11,8 @@ const RecordPage: React.FC = () => {
   const audioStream = useRef<MediaStream | null>(null);
 
   const startRecording = () => {
-    setShowRecordingIndicator(true); // Show recording indicator
+    setShowRecordingIndicator(true);
+    setRecordedChunks([]); // Reset recorded chunks
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then((stream) => {
         audioStream.current = stream;
@@ -29,7 +29,7 @@ const RecordPage: React.FC = () => {
   };
 
   const stopRecording = () => {
-    setShowRecordingIndicator(false); // Hide recording indicator
+    setShowRecordingIndicator(false);
     if (mediaRecorder.current) {
       mediaRecorder.current.stop();
     }
@@ -61,53 +61,54 @@ const RecordPage: React.FC = () => {
       const downloadURL = audioURL.replace(/^data:audio\/[^;]+/, 'data:attachment/mp3');
       return downloadURL;
     }
-    return '#'; // Return a fallback URL or handle this case as needed
+    return '#';
   };
-  
-
-  // index.js (node example)
 
   const uploadAudio = async () => {
     if (recordedChunks.length > 0) {
       const file = new File(recordedChunks, 'recorded_audio.mp3', { type: 'audio/mp3' });
       const formData = new FormData();
       formData.append('audio', file);
-      const deepgram = createClient("747779c1611091dea34cca02650e5ee66a58585e");
-  
       try {
-        const { results } = await deepgram.transcription.preRecorded({
-          buffer: recordedChunks,
-          mimetype: 'audio/mp3',
-        }, {
-          model: "nova-2",
-          smart_format: true,
+        const response = await fetch('/api/authenticate', {
+          method: 'POST',
+          body: formData,
         });
-  
-        console.dir(results, { depth: null });
-      } catch (error) {
-        console.error(error);
+
+        if (!response.ok) {
+          throw new Error('Failed to transcribe file');
+        }
+
+        const result = await response.json();
+        console.log('File transcription successful:', result);
+      } catch (error: any) {
+        console.error('Error transcribing file:', error.message);
       }
     }
   };
 
   return (
     <div>
-      <h1>Record Page</h1>
-      <button onClick={startRecording} disabled={recording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!recording}>
-        Stop Recording
-      </button>
-      <button onClick={playRecordedAudio} disabled={!recordedChunks.length}>
-        Play Recorded Audio
-      </button>
-      <audio controls src={audioPlayerSrc} />
-      <a href={createDownloadURL()} download="recorded_audio.mp3">Download Audio</a>
-      <button onClick={uploadAudio} disabled={!recordedChunks.length}>
-        Upload Audio
-      </button>
-      {showRecordingIndicator && <div className="recording-indicator" />} {/* Display recording indicator */}
+      <div className="navbar">
+        {recording ? (
+          <button onClick={stopRecording} disabled={!recording}>
+            Stop Recording
+          </button>
+        ) : (
+          <button onClick={startRecording} disabled={recording}>
+            Start Recording
+          </button>
+        )}
+        {/* <button onClick={playRecordedAudio} disabled={!recordedChunks.length}>
+          Play Recorded Audio
+        </button> */}
+        <a href={createDownloadURL()} download="recorded_audio.mp3">Download Audio</a>
+        <button onClick={uploadAudio} disabled={!recordedChunks.length}>
+          Generate Transcription
+        </button>
+      </div>
+      {/* <audio controls src={audioPlayerSrc} /> */}
+      {showRecordingIndicator && <div className="recording-indicator" />}
     </div>
   );
 };

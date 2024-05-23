@@ -65,7 +65,7 @@ const App: () => JSX.Element = () => {
         captionTimeout.current = setTimeout(() => {
           setCaption(undefined);
           clearTimeout(captionTimeout.current);
-        }, 3000);
+        }, 2000);
       }
     };
 

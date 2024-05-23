@@ -89,30 +89,38 @@ const generatePDF = (text: string): PDFKit.PDFDocument => {
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
+    const formData = await req.formData();
+    const file = formData.get('audio') as File; 
+    if (!file) {
+      return NextResponse.json({ error: 'No file provided' });
+    } 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const publicDir = path.join(process.cwd(), 'public');
+    const filePath = path.join(publicDir, `recorded_audio_${Date.now()}.mp3`);
+    fs.writeFileSync(filePath, buffer);
 
-    // STEP 2: Call the transcribeUrl method with the audio payload and options
-    const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
+    const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? '');
+
+    // STEP 3: Call the transcribeFile method with the audio payload and options
+    const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+      // path to the audio file
+      fs.readFileSync(filePath),
+      // STEP 4: Configure Deepgram options for audio analysis
       {
-        url: "https://dpgr.am/spacewalk.wav",
-      },
-      // STEP 3: Configure Deepgram options for audio analysis
-      {
-        model: "nova-2",
+        model: 'nova-2',
         smart_format: true,
       }
     );
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    // STEP 4: Print the results
+    // Print the results
     if (result) {
       console.dir(result, { depth: null });
-      return NextResponse.json({ message: "Transcription completed successfully" });
+      return NextResponse.json({ message: 'Transcription completed successfully', result });
     }
-    // NextResponse.json({ 'msg':"success" })
+
   } catch (error) {
     // Handle errors
     return NextResponse.json({ error: (error as Error).message });

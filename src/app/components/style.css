@@ -1,20 +1,46 @@
+/* style.css */
+
 .recording-indicator {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
-    animation: pulse 1s infinite alternate; /* Add a pulsating animation */
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
-  
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    100% {
-      transform: scale(1.2);
-    }
+  50% {
+    transform: scale(1.5);
   }
-  
+  100% {
+    transform: scale(1);
+  }
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #333;
+  padding: 1rem;
+}
+
+.navbar button, .navbar a {
+  background-color: #d7d7d7;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.navbar button:hover, .navbar a:hover {
+  background-color: #d7d7d7;
+}
